@@ -1,17 +1,20 @@
-#import "@preview/polylux:0.3.1": *
+#import "./theme.typ": *
 
-#import themes.simple: *
-#set text(font: "Tahoma")
 #set page(paper: "presentation-16-9")
 #set text(size: 25pt)
 
 #show: simple-theme.with(
+  foreground: dark,
+  background: light
 )
 
 #title-slide[
   = Rust
   === for JS/TS developers
-  #v(2em)
+
+  #figure(
+    image("assets/ferris.png", width: 10%)
+  )
 
   Miguel Palhas (\@naps62) / Subvisual
 ]
@@ -45,7 +48,6 @@
     1. slow to compile
     2. type inference wasn't a thing
     3. tooling
-    4. ...
   ]
 ]
 
@@ -61,40 +63,20 @@
   ```
 ]
 
-#centered-slide[
-  ```javascript 1 + "2" == 3```
+#oneliner-slide[
+  ```js
+  1 + "2" == 3
+  ```
 
   #pdfpc.speaker-note("Scripting takes over")
 ]
 
-#slide[
-  == Duck typing
-
-  ```javascript
-  class Duck {
-    noise = () => console.log('quack')
-  }
-
-  function makeNoise(duck: Duck) {
-    duck.noise();
-  }
-
-  let cat = { noise: () => console.log('meow') }
-  makeNoise(cat)
-  ```
-]
-
-#centered-slide[
+#oneliner-slide(size: 1.7em)[
   == `Undefined is not a function`
 ]
 
 #focus-slide[
-  == Types now
-]
-
-// structural vs nominal typing
-#centered-slide[
-  == Structural vs Nominal typing
+  == 2. Types of Typings
 ]
 
 #slide[
@@ -129,7 +111,7 @@
     // this would not compile
     // let y: Bar = x;
     
-    // works (more on this later)
+    // works (explicit conversion needs to be defined)
     let y: Bar = x.into();
   }
   ```
@@ -137,6 +119,20 @@
 
 #focus-slide[
   == What makes Rust good?
+]
+
+#slide[
+  = "If it compiles, it works"
+
+  #v(2em)
+  #pause
+  not to be taken literally
+
+  it's how strongly typed programming *feels*
+]
+
+#slide[
+  = "Making illegal states unrepresentable"
 ]
 
 #focus-slide[
@@ -155,10 +151,11 @@
   ][
     #only(2)[
       ```rust
-      let list: Vec<u32> = vec![1, 2, 3]
-        .iter()
-        .map(|v: u32| v + 1)
-        .collect::<Vec<u32>>()
+      let list: Vec<u32> =
+        vec![1, 2, 3]
+          .iter()
+          .map(|v: u32| v + 1)
+          .collect::<Vec<u32>>()
       ```
 
       integer types are easily inferred
@@ -167,10 +164,11 @@
 
     #only(3)[
       ```rust
-      let list: Vec<u32> = vec![1, 2, 3]
-        .iter()
-        .map(|v| v + 1)
-        .collect::<Vec<u32>>()
+      let list: Vec<u32> =
+        vec![1, 2, 3]
+          .iter()
+          .map(|v| v + 1)
+          .collect::<Vec<u32>>()
       ```
 
       closure arguments are inferred
@@ -179,10 +177,11 @@
 
     #only(4)[
       ```rust
-      let list: Vec<u32> = vec![1, 2, 3]
-        .iter()
-        .map(|v| v + 1)
-        .collect::<Vec<_>>()
+      let list: Vec<u32> =
+        vec![1, 2, 3]
+          .iter()
+          .map(|v| v + 1)
+          .collect::<Vec<_>>()
       ```
 
       elements in collections are inferred
@@ -192,10 +191,11 @@
     #only(5)[
 
       ```rust
-      let list: Vec<u32> = vec![1, 2, 3]
-        .iter()
-        .map(|v| v + 1)
-        .collect()
+      let list: Vec<u32> =
+        vec![1, 2, 3]
+          .iter()
+          .map(|v| v + 1)
+          .collect()
       ```
 
       actually, the entire `collect` type and `list` type are redundant
@@ -204,13 +204,14 @@
     #only(6)[
 
       ```rust
-      let list: Vec<_> = vec![1, 2, 3]
-        .iter()
-        .map(|v| v + 1)
-        .collect()
+      let list: Vec<_> =
+        vec![1, 2, 3]
+          .iter()
+          .map(|v| v + 1)
+          .collect()
       ```
 
-      and the `Vec` element itself is inferred from numbers:
+      and the `Vec` element itself is inferred from numbers
     ]
   ]
 ]
@@ -218,8 +219,9 @@
 #slide[
   #set align(horizon)
 
-  Type inference actually eliminates most of the noise.
-  Only exceptions: funtion headers, and ambiguous declarations
+  Type inference eliminates most noise.
+
+  Exceptions: function headers; ambiguity.
 
   ```rust
   fn increment_and_dedup(v: Vec<u32>) -> HashSet<u32> {
@@ -279,6 +281,43 @@
 ]
 
 #focus-slide[
+  == 3. Algebraic types
+]
+
+#horizon-slide[
+  == Product types
+  when you have one thing AND another thing
+
+  ```rust
+  struct Rectangle {
+    width: u32,
+    height: u32
+  }
+  ```
+]
+
+#horizon-slide[
+  == Sum types
+  when you have one thing OR another thing
+
+  #side-by-side[
+    ```rust
+    enum Option<T> {
+      None,
+      Some(T)
+    }
+    ```
+  ][
+    ```rust
+    enum Result<T, E> {
+      Ok(T),
+      Err(E)
+    }
+    ```
+  ]
+]
+
+#focus-slide[
   == 3. Zero cost abstractions
 ]
 
@@ -286,47 +325,37 @@
   #set align(horizon)
   The ability to use higher-level features without incurring additional runtime cost.
 
-  The trade-off: compiler complexity, and compilation times.
-]
-
-#slide[
-  == Zero Sized Types
-  TODO: do I want to keep this topic?
-
-  ```rust
-  type Never = ();
-  struct Void;
-  enum Unit { Unit };
-  ```
-  }
-]
-
-#slide[
-  == Why?
-
-  1. To distinguish types that are structural equal, but conceptually different
-
-  ```rust
-
-  ```
-
+  The trade-off: compile-time complexity
 ]
 
 #focus-slide[
   == 4. Tooling
 ]
 
-#slide[
-  == TODO
+#centered-slide[
+  TODO rust-analyzer screenshot
+]
 
-  1. dependency-management done righ
-  2. out-of-the-box tooling docs, tests, benchmarks
-  3. cross-platform support
-  4. WASM
+#centered-slide[
+  TODO cargo
+]
+
+#centered-slide[
+  TODO build for WASM
 ]
 
 #focus-slide[
   == What's "built with Rust"?
+]
+
+#centered-slide[
+  == `just`
+  #figure(image("assets/just.png", height: 75%))
+]
+
+#centered-slide[
+  == `delta`
+  #figure(image("assets/delta.png", height: 75%))
 ]
 
 #centered-slide[
@@ -338,14 +367,17 @@
   #figure(image("assets/tauri.png", height: 75%))
 ]
 
-#centered-slide[
-  == `just`
-  #figure(image("assets/just.png", height: 75%))
+#focus-slide[
+  == Why NOT Rust?
 ]
 
 #centered-slide[
-  == `delta`
-  #figure(image("assets/delta.png", height: 75%))
+  = Refactoring is a slog 
+  == (Fact Checking)
+]
+
+#centered-slide[
+  #figure(image("assets/rust-refactoring.png"))
 ]
 
 #title-slide[
