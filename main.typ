@@ -65,7 +65,7 @@
 
 #oneliner-slide[
   ```js
-  1 + "2" == 3
+  1 + "2" == "12"
   ```
 
   #pdfpc.speaker-note("Scripting takes over")
@@ -76,7 +76,7 @@
 ]
 
 #focus-slide[
-  == 2. Types of Typings
+  = 2. Types of Typings
 ]
 
 #slide[
@@ -118,25 +118,11 @@
 ]
 
 #focus-slide[
-  == What makes Rust good?
-]
-
-#slide[
-  = "If it compiles, it works"
-
-  #v(2em)
-  #pause
-  not to be taken literally
-
-  it's how strongly typed programming *feels*
-]
-
-#slide[
-  = "Making illegal states unrepresentable"
+  = What makes Rust good?
 ]
 
 #focus-slide[
-  == 1. Types, but comfortably
+  = 1. Types, but comfortably
 ]
 
 #slide[
@@ -231,7 +217,7 @@
 ]
 
 #focus-slide[
-  == 2. Borrow checker
+  = 2. Borrow checker
 ]
 
 #slide[
@@ -281,7 +267,7 @@
 ]
 
 #focus-slide[
-  == 3. Algebraic types
+  = 3. Algebraic types
 ]
 
 #horizon-slide[
@@ -318,7 +304,7 @@
 ]
 
 #focus-slide[
-  == 3. Zero cost abstractions
+  = 4. Zero cost abstractions
 ]
 
 #slide[
@@ -328,24 +314,91 @@
   The trade-off: compile-time complexity
 ]
 
+#slide[
+  == "If it compiles, it works"
+
+  #v(2em)
+  not to be taken literally
+
+  it's how strongly typed programming *feels*
+]
+
+#slide[
+  == "Making illegal states unrepresentable"
+
+  #v(2em)
+  Aim for compile-time enforcements instead of runtime validations
+
+  - Type-drive development;
+  - Abuse `Option`, `Result`, and `enum`;
+  - Typestate pattern.
+]
+
+
 #focus-slide[
-  == 4. Tooling
+  = 5. Tooling
 ]
 
 #centered-slide[
-  TODO rust-analyzer screenshot
+  ```sh
+    cargo build
+    cargo run --package serve
+    cargo +nightly clippy
+    cargo fmt
+    cargo test
+    cargo build --target wasm32-unknown-unknown
+    cargo audit
+    bacon
+  ```
 ]
 
 #centered-slide[
-  TODO cargo
+  == Clippy is awesome
+
+  #figure(
+    image("assets/clippy.png", width: 70%)
+  )
 ]
 
 #centered-slide[
-  TODO build for WASM
+  [rust-analyzer live demo]
 ]
 
 #focus-slide[
-  == What's "built with Rust"?
+  = Why NOT Rust?
+]
+
+#centered-slide[
+  == Compilation times?
+]
+
+#horizon-slide[
+  === Half-true
+
+  - Incremental compilation is great(ish)
+  - Not quite instant-reload, but rather close
+  - Release builds are more painful
+  - You should `cargo check` instead of `cargo build`
+]
+
+#centered-slide[
+  == Refactoring is a slog?
+]
+
+#centered-slide[
+  #figure(image("assets/rust-refactoring.png"))
+]
+
+#centered-slide[
+  == Not suitable for quick prototyping?
+]
+
+#centered-slide[
+  Only true if you haven't been fully indoctrinated yet
+]
+
+#focus-slide[
+  = What's "built with Rust"?
 ]
 
 #centered-slide[
@@ -359,25 +412,16 @@
 ]
 
 #centered-slide[
+  #figure(image("assets/helix.png", height: 100%))
+]
+
+#centered-slide[
   == Typst
-  #figure(image("assets/typst.png", height: 75%))
+  #figure(image("assets/typst.png", height: 78%))
 ]
 
 #centered-slide[
-  #figure(image("assets/tauri.png", height: 75%))
-]
-
-#focus-slide[
-  == Why NOT Rust?
-]
-
-#centered-slide[
-  = Refactoring is a slog 
-  == (Fact Checking)
-]
-
-#centered-slide[
-  #figure(image("assets/rust-refactoring.png"))
+  #figure(image("assets/tauri.png", height: 95%))
 ]
 
 #title-slide[
