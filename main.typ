@@ -10,7 +10,7 @@
 
 #title-slide[
   = Rust
-  === for JS/TS developers
+  === A brief intro
 
   #figure(
     image("assets/ferris.png", width: 10%)
@@ -20,7 +20,6 @@
 ]
 
 // intro
-
 #centered-slide[
   #figure(
     image("assets/dhh.png", width: 80%)
@@ -76,24 +75,20 @@
 ]
 
 #focus-slide[
-  = 2. Types of Typings
+  = Types of Types
 ]
 
 #slide[
   == Structural Typing (Typescript, OCaml, ...)
+
   #set text(size: 22pt)
 
+  #image("assets/ts.png", width: 20pt)
   ```typescript
   type Foo = { x: number, y: string };
   type Bar = { x: number };
 
   let x: Foo = { x: 1, y: "hello" };
-
-  // works
-  let y: Bar = x;
-
-  console.log(y)
-  // => { x: 1, y: "hello" }
   ```
 ]
 
@@ -101,6 +96,7 @@
   == Nominal Typing (Rust, C/C++, ...)
   #set text(size: 22pt)
 
+  #image("assets/ferris.png", width: 30pt)
   ```rust
   struct Foo { x: i32, y: String };
   struct Bar { x: i32 };
@@ -110,9 +106,6 @@
 
     // this would not compile
     // let y: Bar = x;
-    
-    // works (explicit conversion needs to be defined)
-    let y: Bar = x.into();
   }
   ```
 ]
@@ -122,84 +115,24 @@
 ]
 
 #focus-slide[
-  = 1. Types, but comfortably
+  = 1. Type inference
 ]
 
 #slide[
-  #side-by-side[
-    ```rust
-    let list: Vec<u32> =
-      vec![1u32, 2u32, 3u32]
-        .iter()
-        .map(|v: u32| v + 1)
-        .collect::<Vec<u32>>()
-    ```
-  ][
-    #only(2)[
-      ```rust
-      let list: Vec<u32> =
-        vec![1, 2, 3]
-          .iter()
-          .map(|v: u32| v + 1)
-          .collect::<Vec<u32>>()
-      ```
+  == This is the same code
 
-      integer types are easily inferred
-      (u8, 16, u32, ...)
-    ]
+  #set align(horizon)
+  ```rust
+  let list: Vec<u32> =
+    vec![1u32, 2u32, 3u32].iter().map(|v: &u32| v + 1).collect::<Vec<u32>>()
+  ```
 
-    #only(3)[
-      ```rust
-      let list: Vec<u32> =
-        vec![1, 2, 3]
-          .iter()
-          .map(|v| v + 1)
-          .collect::<Vec<u32>>()
-      ```
+  #v(2em)
 
-      closure arguments are inferred
-      99% of the time
-    ]
-
-    #only(4)[
-      ```rust
-      let list: Vec<u32> =
-        vec![1, 2, 3]
-          .iter()
-          .map(|v| v + 1)
-          .collect::<Vec<_>>()
-      ```
-
-      elements in collections are inferred
-      99% of the time
-    ]
-
-    #only(5)[
-
-      ```rust
-      let list: Vec<u32> =
-        vec![1, 2, 3]
-          .iter()
-          .map(|v| v + 1)
-          .collect()
-      ```
-
-      actually, the entire `collect` type and `list` type are redundant
-    ]
-
-    #only(6)[
-
-      ```rust
-      let list: Vec<_> =
-        vec![1, 2, 3]
-          .iter()
-          .map(|v| v + 1)
-          .collect()
-      ```
-
-      and the `Vec` element itself is inferred from numbers
-    ]
-  ]
+  ```rust
+  let list =
+    vec![1, 2, 3].iter().map(|v| v + 1).collect()
+  ```
 ]
 
 #slide[
@@ -217,97 +150,44 @@
 ]
 
 #focus-slide[
-  = 2. Borrow checker
+  = 2. Memory Safety
+  === even in multi-threaded code
 ]
 
 #slide[
-  == Ownership and References
+  = This fails to compile
 
-  #side-by-side[
-    ```typescript
-    type Foo = { x: number };
-
-    function add(foo: Foo) {
-      foo.x += 1;
-    }
-    ```
-  ][
-    #only(1)[
-      ```rust
-      struct Foo { x: u32 }
-
-      fn add(foo: Foo) {
-        foo.x += 1;
-      }
-      ```
-      #set text(size: 20pt)
-      error[E0594]: cannot assign to `foo.x`, as `foo` is not declared as mutable
-    ]
-    #only(2)[
-      ```rust
-      struct Foo { x: u32 }
-
-      fn add(foo: &Foo) {
-        foo.x += 1;
-      }
-      ```
-      #set text(size: 20pt)
-      error[E0594]: cannot assign to `foo.x`, which is behind a `&` reference
-    ]
-    #only(3)[
-      ```rust
-      struct Foo { x: &mut u32 }
-
-      fn add(foo: mut Foo) {
-        foo.x += 1;
-      }
-      ```
-    ]
-  ]
-]
-
-#focus-slide[
-  = 3. Algebraic types
-]
-
-#horizon-slide[
-  == Product types
-  when you have one thing AND another thing
-
+  #set align(horizon)
   ```rust
-  struct Rectangle {
-    width: u32,
-    height: u32
+  fn main() {
+    let mut data = vec![1, 2]; // allocate an array
+    let first = &data[0];      // create an immutable ref
+    data.push(4);              // attempt to mutate
   }
   ```
-]
 
-#horizon-slide[
-  == Sum types
-  when you have one thing OR another thing
-
-  #side-by-side[
-    ```rust
-    enum Option<T> {
-      None,
-      Some(T)
-    }
-    ```
-  ][
-    ```rust
-    enum Result<T, E> {
-      Ok(T),
-      Err(E)
-    }
-    ```
+  ```rust Vec::push()``` takes a mutable reference, which needs to be exclusive.
   ]
+
+#slide[
+  = Multi-threading type-safety
+
+  #set align(horizon)
+  #table(
+    columns: (1fr, 3fr),
+    stroke: none,
+    [```rust trait Send```],  [safe to *send* to another thread],
+    [```rust trait Sync```],  [safe to *share* between threads],
+  )
 ]
 
 #focus-slide[
-  = 4. Zero cost abstractions
+  = 3. Powerful compile-time checks
 ]
 
 #slide[
+  == Zero-cost abstractions
+
   #set align(horizon)
   The ability to use higher-level features without incurring additional runtime cost.
 
@@ -324,19 +204,36 @@
 ]
 
 #slide[
-  == "Making illegal states unrepresentable"
+  == Making illegal states unrepresentable
 
-  #v(2em)
-  Aim for compile-time enforcements instead of runtime validations
+  #only(1)[
+    #v(2em)
+    Aim for compile-time enforcements instead of runtime validations
 
-  - Type-drive development;
-  - Abuse `Option`, `Result`, and `enum`;
-  - Typestate pattern.
+    - Type-drive development;
+    - Abuse `Option`, `Result`, and `enum`;
+    - Typestate pattern.
+  ]
+
+  #only(2)[
+    ```rust
+    enum AccountState {
+      Active { email: Email, active_at: DateTime },
+      Inactive { email: Email },
+      Banned { reason: String },
+    }
+
+    /// Newtype pattern
+    /// email regex can be enforced on constructor
+    /// runtime size is the same as String
+    type Email(String)
+    ```
+  ]
 ]
 
 
 #focus-slide[
-  = 5. Tooling
+  = 4. Tooling
 ]
 
 #centered-slide[
@@ -361,19 +258,28 @@
 ]
 
 #centered-slide[
-  [rust-analyzer live demo]
+  == Rust-analyzer <=> TS Server
+]
+
+#focus-slide[
+  = Tips to get started
+]
+
+#slide[
+  == Don't get too Rust'y right away
+
+  - if you're writing ```rust Foo<'a>```, you're gonna have a bad time;
+  - Abuse ```rust clone()``` instead of fighting the borrow checker;
+  - get v1 working, only then optimize.
+  - tooling will teach you along the way
 ]
 
 #focus-slide[
   = Why NOT Rust?
 ]
 
-#centered-slide[
+#slide[
   == Compilation times?
-]
-
-#horizon-slide[
-  === Half-true
 
   - Incremental compilation is great(ish)
   - Not quite instant-reload, but rather close
@@ -381,48 +287,11 @@
   - You should `cargo check` instead of `cargo build`
 ]
 
-#centered-slide[
+#slide[
   == Refactoring is a slog?
+  #figure(image("assets/rust-refactoring.png", height: 75%))
 ]
 
-#centered-slide[
-  #figure(image("assets/rust-refactoring.png"))
-]
-
-#centered-slide[
-  == Not suitable for quick prototyping?
-]
-
-#centered-slide[
-  Only true if you haven't been fully indoctrinated yet
-]
-
-#focus-slide[
-  = What's "built with Rust"?
-]
-
-#centered-slide[
-  == `just`
-  #figure(image("assets/just.png", height: 75%))
-]
-
-#centered-slide[
-  == `delta`
-  #figure(image("assets/delta.png", height: 75%))
-]
-
-#centered-slide[
-  #figure(image("assets/helix.png", height: 100%))
-]
-
-#centered-slide[
-  == Typst
-  #figure(image("assets/typst.png", height: 78%))
-]
-
-#centered-slide[
-  #figure(image("assets/tauri.png", height: 95%))
-]
 
 #title-slide[
   = Rust
