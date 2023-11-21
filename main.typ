@@ -19,58 +19,57 @@
   Miguel Palhas (\@naps62) / Subvisual
 ]
 
-// intro
+#slide[
+  #set align(center)
+  #side-by-side[
+    == Tauri
+    #figure(
+      image("assets/tauri.png", width: 100%)
+    )
+  ][
+    == Typst
+    #figure(
+      image("assets/typst.png", width: 100%)
+    )
+  ]
+]
+
+#slide[
+  #set align(center)
+  #side-by-side[
+    == Delta
+    #figure(
+      image("assets/delta.png", width: 100%)
+    )
+  ][
+    == Just
+    #figure(
+      image("assets/just.png", width: 100%)
+    )
+  ]
+]
+
 #centered-slide[
   #figure(
     image("assets/dhh.png", width: 80%)
   )
 ]
 
-// types in the past
-#focus-slide[
-  == Types in the past
-]
-
-#centered-slide[
-  #side-by-side[
-    ```c
-    int main() {
-      int x = 0;
-      long int y = (long) x;
-
-      println("%d", y);
-    }
-    ```
-  ][
-    #set align(left)
-
-    1. slow to compile
-    2. type inference wasn't a thing
-    3. tooling
-  ]
-]
-
-#centered-slide[
+#slide[
+  == We went from this
 
   ```
   unresolved external symbol "void __cdecl importStoredClients(class
   std::basic_fstream<char,struct std::char_traits<char> > const &,class 
   std::vector<class Client,class std::allocator<class Client> > &)" (?
   importStoredClients@@YAXABV?$basic_fstream@DU?$char_traits@D@std@@@std@@AAV?
-  $vector@VClient@@V?$allocator@VClient@@@std@@@2@@Z) referenced in function 
-  _main	DataTracker
+  $vector@VClient@@V?$allocator@VClient@@@std@@@2@@Z)
   ```
 ]
 
-#oneliner-slide[
-  ```js
-  1 + "2" == "12"
-  ```
-
-  #pdfpc.speaker-note("Scripting takes over")
-]
-
-#oneliner-slide(size: 1.7em)[
+#slide[
+  == ... to this
+  == ```js 1 + "2" == "12" ```
   == `Undefined is not a function`
 ]
 
@@ -160,14 +159,15 @@
   #set align(horizon)
   ```rust
   fn main() {
-    let mut data = vec![1, 2]; // allocate an array
-    let first = &data[0];      // create an immutable ref
-    data.push(4);              // attempt to mutate
+    let x = 1;
+
+    let r1 = &x;
+    let r2 = &mut x;
+
+    println!("{} {}", r1, r2);
   }
   ```
-
-  ```rust Vec::push()``` takes a mutable reference, which needs to be exclusive.
-  ]
+]
 
 #slide[
   = Multi-threading type-safety
@@ -182,16 +182,16 @@
 ]
 
 #focus-slide[
-  = 3. Powerful compile-time checks
+  = 3. Compiler
 ]
 
 #slide[
   == Zero-cost abstractions
 
   #set align(horizon)
-  The ability to use higher-level features without incurring additional runtime cost.
+  The ability to use high-level features without runtime cost.
 
-  The trade-off: compile-time complexity
+  Trade-off: compile-time complexity
 ]
 
 #slide[
@@ -208,11 +208,11 @@
 
   #only(1)[
     #v(2em)
-    Aim for compile-time enforcements instead of runtime validations
+    Aim for compile-time safety, not runtime validations
 
     - Type-drive development;
-    - Abuse `Option`, `Result`, and `enum`;
-    - Typestate pattern.
+    - Abuse ```rust Option```, ```rust Result```, and ```rust enum```;
+    - Typestate pattern. (https://cliffle.com/blog/rust-typestate/)
   ]
 
   #only(2)[
@@ -249,18 +249,6 @@
   ```
 ]
 
-#centered-slide[
-  == Clippy is awesome
-
-  #figure(
-    image("assets/clippy.png", width: 70%)
-  )
-]
-
-#centered-slide[
-  == Rust-analyzer <=> TS Server
-]
-
 #focus-slide[
   = Tips to get started
 ]
@@ -276,6 +264,10 @@
 
 #focus-slide[
   = Why NOT Rust?
+  #v(1em)
+
+  #set text(size: 24pt)
+  bonus slides if I got here before the 20m mark
 ]
 
 #slide[
@@ -295,8 +287,11 @@
 
 #title-slide[
   = Rust
-  == for JS/TS developers
-  #v(2em)
+  === A brief intro
 
-  Miguel Palhas / \@naps62
+  #figure(
+    image("assets/ferris.png", width: 10%)
+  )
+
+  Miguel Palhas (\@naps62) / Subvisual
 ]
