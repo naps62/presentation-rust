@@ -188,7 +188,7 @@
 #slide[
   == Zero-cost abstractions
 
-  #set align(horizon)
+  #v(2em)
   The ability to use high-level features without runtime cost.
 
   Trade-off: compile-time complexity
